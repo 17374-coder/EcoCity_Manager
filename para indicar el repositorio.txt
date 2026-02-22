@@ -1,0 +1,45 @@
+**********************************************************************
+** Visual Studio 2026 Developer Command Prompt v18.2.0
+** Copyright (c) 2025 Microsoft Corporation
+**********************************************************************
+
+C:\Program Files\Microsoft Visual Studio\18\Community>rm -Recurse -Force .git
+"rm" no se reconoce como un comando interno o externo,
+programa o archivo por lotes ejecutable.
+
+C:\Program Files\Microsoft Visual Studio\18\Community>e:
+
+E:\>cd E:\1 LIC CyTI-12 sep\1 CLASROOM CLASES\1CLASS 2026\1 POO\20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed\EcoCity_Manager\Sesion01
+
+E:\1 LIC CyTI-12 sep\1 CLASROOM CLASES\1CLASS 2026\1 POO\20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed\EcoCity_Manager\Sesion01>git init
+Initialized empty Git repository in E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01/.git/
+
+E:\1 LIC CyTI-12 sep\1 CLASROOM CLASES\1CLASS 2026\1 POO\20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed\EcoCity_Manager\Sesion01>git add hospitales.py
+fatal: detected dubious ownership in repository at 'E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01'
+'E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01' is on a file system that does not record ownership
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory 'E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01'
+
+E:\1 LIC CyTI-12 sep\1 CLASROOM CLASES\1CLASS 2026\1 POO\20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed\EcoCity_Manager\Sesion01>git status
+fatal: detected dubious ownership in repository at 'E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01'
+'E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01' is on a file system that does not record ownership
+To add an exception for this directory, call:
+
+        git config --global --add safe.directory 'E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01'
+
+E:\1 LIC CyTI-12 sep\1 CLASROOM CLASES\1CLASS 2026\1 POO\20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed\EcoCity_Manager\Sesion01>
+
+
+
+
+COMANDO LISTO 
+
+ git config --global --add safe.directory "E:/1 LIC CyTI-12 sep/1 CLASROOM CLASES/1CLASS 2026/1 POO/20 DE FEBRERO PLANEACIO CON BOOK Fluent Python, 2nd Ed/EcoCity_Manager/Sesion01"
+
+
+1
+git commit -m "feat: implementa logica de hospitales y gestion de memoria"
+
+2
+
