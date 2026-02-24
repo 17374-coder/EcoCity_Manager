@@ -1,28 +1,45 @@
-# 🏙️ Eco-City Manager: Simulador de Sostenibilidad Urbana
+ 
+# 🏙️ Eco-City Analytics Manager
 
-Este proyecto es un simulador de gestión de recursos urbanos desarrollado en **Python**, enfocado en la aplicación de principios de **Programación Orientada a Objetos (POO)** y **Pensamiento Computacional**.
+**Curso:** Programación Orientada a Objetos (POO)  
+**Licenciatura:** Ciencia de Datos | UAGro  
+**Semestre:** Febrero - Junio 2026
 
-##  Objetivo del Proyecto
-Diseñar una infraestructura digital capaz de gestionar recursos críticos (energía, agua, presupuesto) de una ciudad inteligente, garantizando la integridad de los datos mediante técnicas avanzadas de memoria y abstracción.
+---
+
+##  Descripción del Proyecto
+**Eco-City Analytics Manager** es un sistema de simulación urbana avanzada diseñado para gestionar y analizar la complejidad de una metrópoli digital. A diferencia de las simulaciones tradicionales, este proyecto se enfoca en la **Ingeniería de Datos** y la **Escalabilidad**, utilizando los pilares de la POO para modelar ciudadanos, infraestructuras y flujos de recursos.
+
+El objetivo es transformar datos crudos en información accionable para la toma de decisiones, aplicando estándares internacionales de arquitectura de software.
+
+
+---
+
+##  Arquitectura del Sistema
+El proyecto se construye de forma incremental a través de 4 unidades clave:
+
+1. **Gestión de Memoria y Estado:** Optimización de recursos para simulaciones de alta densidad (100k+ objetos).
+2. **Robustez e Integridad:** Validación profesional de datos y seguridad criptográfica (MD5/SHA).
+3. **Escalabilidad Modular:** Implementación de Patrones Creacionales (Factory, Singleton) y jerarquías complejas.
+4. **Persistencia Políglota:** Integración con Excel (Pandas) y bases de datos relacionales (MySQL).
+
+
+---
 
 ##  Tecnologías Utilizadas
-* **Lenguaje:** Python 3.10+
-* **Gestión de Versiones:** Git & GitHub
-* **Librerías:** Pandas (para analítica de datos)
+* **Lenguaje:** Python 3.10+ (Enfoque en Data Classes y Tipado Estático).
+* **Análisis de Datos:** Pandas, NumPy.
+* **Persistencia:** MySQL, JSON, Excel.
+* **Modelado:** StarUML (Estándar UML 2.5).
 
-##  Estructura del Repositorio
-* `Sesion01/`: Fundamentos de identidad, memoria y `deepcopy`.
-* `Sesion02/`: Implementación de métodos y comportamiento de objetos.
-* `Sesion03/`: Abstracción de datos con la clase `DataSummary`.
-* `data/`: Archivos CSV con reportes de sensores.
+---
 
-##  Instalación y Uso
-1. Clona este repositorio:
-   `git clone https://github.com/tu-usuario/EcoCity_Manager.git`
-2. Navega a la carpeta de la sesión deseada:
-   `cd Sesion01`
-3. Ejecuta el script principal:
-   `python identidad.py`
+##  Guía de Inicio para Estudiantes
+
+### 1. Clonar el repositorio
+```bash
+git clone [https://github.com/17374-coder/EcoCity_Manager.git](https://github.com/17374-coder/EcoCity_Manager.git)
+cd EcoCity_Manager
 
 ##  Autor
 * **Nombre:** JMHR
