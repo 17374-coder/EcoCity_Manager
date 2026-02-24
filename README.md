@@ -3,7 +3,7 @@
 
 **Curso:** Programación Orientada a Objetos (POO)  
 **Licenciatura:** Ciencia de Datos | UAGro  
-**Semestre:** Febrero - Junio 2026
+**Semestre:** Febrero  2026
 
 ---
 
