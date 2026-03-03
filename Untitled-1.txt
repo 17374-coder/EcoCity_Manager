@@ -1,0 +1,57 @@
+IDENTIFICATION DIVISION.
+       PROGRAM-ID. SistemaInventario.
+       AUTHOR. Gemini-AI.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       * Variables de entrada
+       01 PRODUCTO.
+          05 NOMBRE-ARTICULO     PIC X(20).
+          05 CANTIDAD            PIC 9(4).
+          05 PRECIO-UNITARIO     PIC 9(5)V99.
+       
+       * Variables de cálculo
+       01 VALOR-TOTAL            PIC 9(7)V99.
+       
+       * Variables de formato para impresión
+       01 MASK-PRECIO            PIC $ZZ,ZZ9.99.
+       01 MASK-TOTAL             PIC $ZZZ,ZZ9.99.
+
+       01 CONTROL-SALIDA         PIC X VALUE 'N'.
+
+       PROCEDURE DIVISION.
+       MAIN-LOGIC.
+           DISPLAY "--- SISTEMA DE GESTION DE INVENTARIO ---".
+           
+           PERFORM UNTIL CONTROL-SALIDA = 'S' OR 's'
+               DISPLAY " "
+               DISPLAY "Ingrese nombre del producto: " 
+               ACCEPT NOMBRE-ARTICULO
+               
+               DISPLAY "Ingrese cantidad en stock: " 
+               ACCEPT CANTIDAD
+               
+               DISPLAY "Ingrese precio unitario: " 
+               ACCEPT PRECIO-UNITARIO
+               
+               * Logica de negocio: Multiplicación
+               COMPUTE VALOR-TOTAL = CANTIDAD * PRECIO-UNITARIO
+               
+               * Formatear números para que se vean bien
+               MOVE PRECIO-UNITARIO TO MASK-PRECIO
+               MOVE VALOR-TOTAL TO MASK-TOTAL
+               
+               * Mostrar resultados
+               DISPLAY "---------------------------------------"
+               DISPLAY "REPORTE DE PRODUCTO:"
+               DISPLAY "Articulo: " NOMBRE-ARTICULO
+               DISPLAY "Precio:   " MASK-PRECIO
+               DISPLAY "Total:    " MASK-TOTAL
+               DISPLAY "---------------------------------------"
+               
+               DISPLAY "¿Desea salir? (S/N): "
+               ACCEPT CONTROL-SALIDA
+           END-PERFORM.
+
+           DISPLAY "Cerrando sistema... Gracias.".
+           STOP RUN.

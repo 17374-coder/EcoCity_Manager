@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<!-- Vista optimizada para celular -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Proyecto Clima Zapata</title>
+
+<style>
+/* ===========================
+   ESTILOS GENERALES
+   =========================== */
+body {
+  font-family: "Segoe UI", sans-serif;
+  text-align: center;
+  margin: 0;
+  background: #f7f7f7;
+}
+
+h1 {
+  margin-top: 15px;
+  color: #333;
+  font-size: 1.5em;
+}
+
+canvas {
+  display: block;
+  margin: 10px auto;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+footer {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+.chart-container {
+  width: 90%;
+  max-width: 950px;
+  margin: 20px auto;
+}
+
+#mensaje {
+  margin: 10px auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  padding: 10px;
+  font-size: 15px;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+
+<!-- Librería Google Charts -->
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+
+<h1>Hoy</h1>
+
+<!-- Canvas del sol / luna -->
+<canvas id="canvas"></canvas>
+
+<footer id="footer"></footer>
+<div id="mensaje">Cargando mensaje...</div>
+
+<!-- Contenedores de gráficas -->
+<div id="chartTemp" class="chart-container" style="height:400px;"></div>
+<div id="chartHum" class="chart-container" style="height:400px;"></div>
+
+<script>
+/* ======================================================
+   VARIABLES GLOBALES
+   ====================================================== */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const SPREADSHEET_ID = "15YOUY2Ca3KuEnWUIGCVv5cAGkGhTjvttCnfGKxSlxLU";
+const SHEET_NAME = "hoy";
+
+let tempActual = null;
+let humActual = null;
+let mensajeTexto = "";
+
+/* 
+  Aquí se almacenan los datos horarios.
+  IMPORTANTE:
+  hora se manejará como STRING "00"–"23"
+*/
+let datosTemp = [];
+let datosHum = [];
+
+/* ======================================================
+   AJUSTE RESPONSIVO DEL CANVAS
+   ====================================================== */
+function ajustarCanvas() {
+  const ancho = Math.min(window.innerWidth - 20, 950);
+  const alto = ancho * 550 / 950;
+  canvas.width = ancho;
+  canvas.height = alto;
+  dibujarEscena();
+}
+window.addEventListener("resize", ajustarCanvas);
+
+/* ======================================================
+   OBTENER DATOS DE GOOGLE SHEETS
+   ====================================================== */
+async function obtenerDatos() {
+  try {
+    // -------- Temperatura y Humedad actual --------
+    const urlActual =
+      `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=K2:L2`;
+
+    const resActual = await fetch(urlActual,{cache:"no-store"});
+    const textActual = await resActual.text();
+    const jsonActual = JSON.parse(textActual.substring(47,textActual.length-2));
+
+    tempActual = jsonActual.table.rows[0]?.c[0]?.v ?? null;
+    humActual  = jsonActual.table.rows[0]?.c[1]?.v ?? null;
+
+    // -------- Mensaje --------
+    const urlMsg =
+      `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=K3`;
+
+    const resMsg = await fetch(urlMsg,{cache:"no-store"});
+    const textMsg = await resMsg.text();
+    const jsonMsg = JSON.parse(textMsg.substring(47,textMsg.length-2));
+
+    mensajeTexto = jsonMsg.table.rows[0]?.c[0]?.v ?? "—";
+
+    // -------- Temperaturas horarias --------
+    const urlTemp =
+      `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=N2:N26`;
+
+    const resTemp = await fetch(urlTemp,{cache:"no-store"});
+    const textTemp = await resTemp.text();
+    const jsonTemp = JSON.parse(textTemp.substring(47,textTemp.length-2));
+
+    datosTemp = jsonTemp.table.rows.map((r,i)=>({
+      hora: String(i).padStart(2,"0"),  // 00–23
+      valor: r.c[0]?.v ?? null
+    }));
+
+    // -------- Humedades horarias --------
+    const urlHum =
+      `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}&range=N29:N53`;
+
+    const resHum = await fetch(urlHum,{cache:"no-store"});
+    const textHum = await resHum.text();
+    const jsonHum = JSON.parse(textHum.substring(47,textHum.length-2));
+
+    datosHum = jsonHum.table.rows.map((r,i)=>({
+      hora: String(i).padStart(2,"0"),
+      valor: r.c[0]?.v ?? null
+    }));
+
+  } catch(e){
+    console.error("Error leyendo hoja:",e);
+  }
+}
+
+/* ======================================================
+   FASE LUNAR
+   ====================================================== */
+function faseLunar() {
+  const ahora = new Date();
+  const lp = 2551443;
+  const new_moon = new Date(1970, 0, 7, 20, 35, 0);
+  return (((ahora - new_moon) / 1000) % lp) / lp;
+}
+
+/* ======================================================
+   DIBUJO SOL / LUNA (NO MODIFICADO)
+   ====================================================== */
+function dibujarEscena() {
+  if(!canvas.width) return;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  const ahora = new Date();
+  const horaDecimal = ahora.getHours() + ahora.getMinutes()/60;
+
+  const cx = canvas.width/2;
+  const cy = canvas.height*480/550;
+  const radio = canvas.width*360/950;
+
+  // Trayectoria
+  ctx.beginPath();
+  ctx.setLineDash([8,6]);
+  ctx.strokeStyle="rgba(255,200,0,0.9)";
+  ctx.lineWidth=2;
+  ctx.arc(cx,cy,radio,Math.PI,2*Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Sol / Luna (idéntico a tu versión)
+  if(horaDecimal>=6 && horaDecimal<=18){
+    const ang = Math.PI + (horaDecimal-6)*(Math.PI/12);
+    const x = cx + radio*Math.cos(ang);
+    const y = cy + radio*Math.sin(ang);
+
+    const grad = ctx.createRadialGradient(x,y,5,x,y,50);
+    grad.addColorStop(0,"rgba(255,255,200,1)");
+    grad.addColorStop(1,"rgba(255,180,0,0)");
+
+    ctx.beginPath();
+    ctx.fillStyle = grad;
+    ctx.arc(x,y,50,0,2*Math.PI);
+    ctx.fill();
+  } else {
+    const fase = faseLunar();
+    let h = horaDecimal < 6 ? horaDecimal+24 : horaDecimal;
+    const ang = Math.PI + (h-18)*(Math.PI/12);
+
+    const x = cx + radio*Math.cos(ang);
+    const y = cy + radio*Math.sin(ang);
+    const r = 45;
+
+    ctx.beginPath();
+    ctx.fillStyle="#f4f4f4";
+    ctx.arc(x,y,r,0,2*Math.PI);
+    ctx.fill();
+
+    ctx.globalCompositeOperation="destination-out";
+    ctx.beginPath();
+    ctx.arc(x+Math.cos(2*Math.PI*fase)*r,y,r,0,2*Math.PI);
+    ctx.fill();
+    ctx.globalCompositeOperation="source-over";
+  }
+
+  // Datos actuales
+  ctx.textAlign="center";
+  ctx.font="bold 60px Segoe UI";
+  ctx.fillStyle="#ff3333";
+  ctx.fillText(tempActual ?? "—", cx, cy-120);
+
+  ctx.font="bold 45px Segoe UI";
+  ctx.fillStyle="#3399ff";
+  ctx.fillText(humActual ?? "—", cx, cy-55);
+
+  ctx.font="16px Segoe UI";
+  ctx.fillStyle="#444";
+  ctx.fillText(
+    `📍 Emiliano Zapata, Acapulco | 🕓 ${ahora.toLocaleString("es-MX")}`,
+    cx, cy+50
+  );
+}
+
+/* ======================================================
+   GRÁFICAS CORREGIDAS (ÚNICO CAMBIO REAL)
+   ====================================================== */
+google.charts.load('current', {'packages':['corechart']});
+
+function dibujarGraficas() {
+
+  // ----- Temperatura -----
+  const tablaTemp = [['Hora','Temperatura',{role:'style'}]];
+
+  for(let h=0; h<24; h++){
+    const hora = String(h).padStart(2,'0');
+    const dato = datosTemp.find(d=>d.hora===hora);
+
+    tablaTemp.push([
+      hora,
+      dato ? dato.valor : null,
+      dato ? 'color:#ff3333' : 'color:#cccccc'
+    ]);
+  }
+
+  // ----- Humedad -----
+  const tablaHum = [['Hora','Humedad',{role:'style'}]];
+
+  for(let h=0; h<24; h++){
+    const hora = String(h).padStart(2,'0');
+    const dato = datosHum.find(d=>d.hora===hora);
+
+    tablaHum.push([
+      hora,
+      dato ? dato.valor : null,
+      dato ? 'color:#3399ff' : 'color:#cccccc'
+    ]);
+  }
+
+  const opciones = titulo => ({
+    title: titulo,
+    legend:'none',
+    curveType:'function',
+    hAxis:{title:'Hora (00–23)'},
+    vAxis:{gridlines:{color:'#eee'}},
+    height:400
+  });
+
+  new google.visualization.LineChart(
+    document.getElementById('chartTemp')
+  ).draw(
+    google.visualization.arrayToDataTable(tablaTemp),
+    opciones('Temperatura por Hora')
+  );
+
+  new google.visualization.LineChart(
+    document.getElementById('chartHum')
+  ).draw(
+    google.visualization.arrayToDataTable(tablaHum),
+    opciones('Humedad por Hora')
+  );
+}
+
+/* ======================================================
+   CICLO DE ACTUALIZACIÓN
+   ====================================================== */
+async function actualizarTodo(){
+  await obtenerDatos();
+  dibujarEscena();
+  google.charts.setOnLoadCallback(dibujarGraficas);
+
+  document.getElementById("footer").textContent =
+    `Actualizado: ${new Date().toLocaleTimeString("es-MX")}`;
+
+  document.getElementById("mensaje").textContent = mensajeTexto;
+}
+
+ajustarCanvas();
+actualizarTodo();
+setInterval(actualizarTodo,10000);
+</script>
+
+</body>
+</html>
