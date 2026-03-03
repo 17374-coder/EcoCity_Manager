@@ -42,5 +42,5 @@ git clone [https://github.com/17374-coder/EcoCity_Manager.git](https://github.co
 cd EcoCity_Manager
 
 ##  Autor
-* **Nombre:** JMHR
+* **Nombre:** Macx Berdeja Guerrero
 * **Rol:** Compañero de equipo - Laboratorio AIoT CyTI
